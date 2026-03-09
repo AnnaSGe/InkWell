@@ -1,93 +1,121 @@
-# InkWell – Personal Journal App
+# InkWell
 
-InkWell is a lightweight offline-first journaling application that allows users to capture thoughts using text, images, audio recordings, and drawings in a block-based editor.
+InkWell is a minimalist personal journaling app built as a single file web application.
+It allows users to create rich journal entries containing text, images, audio recordings, and drawings, all stored securely in the cloud.
 
-The app runs entirely in the browser and stores data locally using browser localStorage, meaning no backend or database setup is required.
+The goal of InkWell is to provide a distraction free writing environment while still supporting multimedia journaling.
 
 ## Features
 
-• Block-based note editor
-• Text, image, audio, and drawing blocks
-• Autosave journaling interface
+• User authentication using Supabase
+• Create and edit journal entries
+• Text blocks for writing notes
+• Image uploads
+• Voice recordings directly from the browser
+• Drawing canvas for sketches
+• Dark mode toggle
 • Pin important notes
 • Search notes instantly
-• Dark and light mode
-• Export notes to CSV (Excel compatible)
-• Offline-first design with no internet required
+• Real time syncing between devices
+• Export notes to CSV
+
+All notes are stored in a Supabase PostgreSQL database and synced automatically across devices.
 
 ## Tech Stack
 
+Frontend
 React (via CDN)
-JavaScript
+JavaScript (Babel in browser)
 HTML + CSS
-Browser LocalStorage
 
-All media (images, audio, drawings) are stored as base64 data directly in the browser.
+Backend
+Supabase
+PostgreSQL database
+Supabase Storage for media files
+Supabase Authentication
 
-## How It Works
+The entire application runs from a single HTML file without any build tools or frameworks.
 
-The application stores all journal data in the browser using a single localStorage object.
-
-Example structure:
-
-```
-inkwell-demo
- ├ user
- ├ notes[]
- └ nextId
-```
-
-Each note uses a block-based structure similar to modern editors:
+## Project Structure
 
 ```
-{
-  id,
-  title,
-  blocks: [
-    { type: "text" },
-    { type: "image" },
-    { type: "audio" },
-    { type: "drawing" }
-  ],
-  createdAt,
-  updatedAt
-}
+InkWell
+│
+├── notes-app.html
+├── README.md
+├── LICENSE
+└── screenshots
+    ├── dashboard.png
+    ├── notes.png
+    └── drawing.png
 ```
 
-## Running the App
+## Setup
 
-1. Download or clone the repository
-2. Open `index.html` in any modern browser
+1. Create a Supabase project.
 
-No installation or dependencies required.
+2. Create the **notes** table using SQL
 
-## Exporting Data
+```
+create table if not exists public.notes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  title text not null default '',
+  blocks jsonb not null default '[]'::jsonb,
+  pinned boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+```
 
-Users can export their notes from the Profile page.
+3. Enable Row Level Security and create policies so users can only access their own notes.
 
-The export feature generates a CSV file that can be opened in:
+4. Create a storage bucket named
 
-• Microsoft Excel
-• Google Sheets
-• LibreOffice
+```
+note-media
+```
+
+5. In `notes-app.html` add your Supabase credentials
+
+```
+const SUPABASE_URL = "your-project-url"
+const SUPABASE_ANON = "your-anon-key"
+```
+
+6. Open the HTML file in a browser.
+
+## Usage
+
+1. Register an account
+2. Create a new note
+3. Write text or add media blocks
+4. Notes automatically save and sync across devices
+
+InkWell works on both desktop and mobile browsers.
 
 ## Screenshots
 
-(Add screenshots here after uploading them)
-
 Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
 Note Editor
+
+![Notes](screenshots/notes.png)
+
 Drawing Canvas
-Profile Page
+
+![Drawing](screenshots/drawing.png)
 
 ## Future Improvements
 
-• Calendar view for journal entries
-• Tagging and categories
+• Mobile PWA version
 • Markdown support
-• Image compression for large media files
-• Optional cloud sync
+• Tagging and folders
+• AI assisted journaling prompts
+• Offline mode
 
 ## License
 
-MIT License
+This project is licensed under the MIT License.
