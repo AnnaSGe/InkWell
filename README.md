@@ -126,12 +126,6 @@ Update `SUPABASE_URL` and `SUPABASE_ANON` at the top of `index.html` with your p
 
 ---
 
-## Use Cases
-
-Personal diary, daily journaling, academic notes, research organization, creative writing, project planning, and second-brain systems.
-
----
-
 ## Developed By
 
-**Anna** — a modern journaling and productivity platform built for expressive writing and knowledge organization.
+**Anna** 
